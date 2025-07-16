@@ -1,0 +1,34 @@
+# Usar amazoncorretto (OpenJDK de Amazon) como imagen base
+FROM amazoncorretto:17-alpine
+
+# Establecer el directorio de trabajo
+WORKDIR /app
+
+# Instalar curl para health checks (opcional)
+RUN apk add --no-cache curl
+
+# Copiar el JAR compilado
+COPY target/Prueba-0.0.1-SNAPSHOT.jar app.jar
+
+# Crear usuario no-root por seguridad
+RUN addgroup -g 1000 spring && adduser -u 1000 -G spring -s /bin/sh -D spring
+
+# Cambiar permisos del archivo JAR
+RUN chown spring:spring app.jar
+
+# Cambiar al usuario spring
+USER spring:spring
+
+# Exponer el puerto 8080
+EXPOSE 8080
+
+# Configurar variables de entorno
+ENV JAVA_OPTS="-Xmx512m -Xms256m"
+ENV SPRING_PROFILES_ACTIVE=prod
+
+# Health check opcional
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:8080/saludo || exit 1
+
+# Comando para ejecutar la aplicación
+CMD ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

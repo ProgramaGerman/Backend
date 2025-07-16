@@ -28,8 +28,14 @@ java -jar target/Prueba-0.0.1-SNAPSHOT.jar
 # Primero compilar el proyecto
 ./mvnw clean package -DskipTests
 
-# Construir la imagen Docker
+# Opción 1: Dockerfile principal (amazoncorretto)
 docker build -t prueba-render .
+
+# Opción 2: Dockerfile alternativo (amazoncorretto + extras)
+docker build -f Dockerfile.alternative -t prueba-render .
+
+# Opción 3: Dockerfile Ubuntu (más confiable)
+docker build -f Dockerfile.ubuntu -t prueba-render .
 ```
 
 ### Ejecutar el contenedor

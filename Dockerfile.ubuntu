@@ -1,5 +1,14 @@
-# Usar amazoncorretto (OpenJDK de Amazon) - imagen más estable
-FROM amazoncorretto:17-alpine
+# Usar Ubuntu como base e instalar OpenJDK
+FROM ubuntu:22.04
+
+# Evitar prompts interactivos durante la instalación
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Actualizar e instalar OpenJDK 17
+RUN apt-get update && \
+    apt-get install -y openjdk-17-jre-headless && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Establecer el directorio de trabajo
 WORKDIR /app
